@@ -70,6 +70,8 @@ app.get("/", (req, res) => {
 
 //     })
 // });
+
+/// INDEX
 app.get('/people', async (req,res)=>{
     // const people = await People.find({});
     // res.send(people);
@@ -86,6 +88,29 @@ app.post('/people', async (req,res) => {
     try{
         res.status(201).json(await People.create(req.body));
     } catch(error){
+        res.status(400).json({message: 'Bad Request'});
+    }
+})
+
+//DELETE///
+app.delete('/people/:id', async (req,res) => {
+    try{
+        res.status(200).json(await People.findByIdAndDelete(req.params.id));
+    } catch(error){
+        res.status(400).json({message: 'bad request'});
+    }
+});
+
+//UPDATE//
+app.put('/people/:id', async (req,res) => {
+    try {
+        res.status(200).json(await People.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            {new: true} // true returns the new object, otherwise returns the old one
+            /// Fourth argument would be a callback
+        ));
+    } catch (error) {
         res.status(400).json({message: 'Bad Request'});
     }
 })
