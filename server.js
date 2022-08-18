@@ -13,6 +13,7 @@ const { urlencoded } = require("express");
 // import express, mongoose
 const express = require("express");
 const mongoose = require('mongoose');
+const peopleRouter= require('./Controllers/peoples');
 
 // Mongoose Connection
 mongoose.connect(DATABASE_URL);
@@ -41,15 +42,15 @@ app.use(morgan('dev'));
 ///Models////
 /////////////
 
-const Schema = mongoose.Schema;
+// const Schema = mongoose.Schema;
 
-const peopleSchema = new Schema({
-    name: String,
-    image: {type: String, default:"https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"},
-    title: String
-}, {timestamps: true, });
+// const peopleSchema = new Schema({
+//     name: String,
+//     image: {type: String, default:"https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"},
+//     title: String
+// }, {timestamps: true, });
 
-const People = mongoose.model('People',  peopleSchema)
+// const People = mongoose.model('People',  peopleSchema)
 
 
 /////////////////////////////////////////////////////////////
@@ -71,49 +72,53 @@ app.get("/", (req, res) => {
 //     })
 // });
 
-/// INDEX
-app.get('/people', async (req,res)=>{
-    // const people = await People.find({});
-    // res.send(people);
-    ////
-    try{
-    res.status(200).json(await People.find({}));
-    } catch (error) {
-        res.status(400).json({message: 'Bad Request'});
-    }
-});
 
-///CREATE/////
-app.post('/people', async (req,res) => {
-    try{
-        res.status(201).json(await People.create(req.body));
-    } catch(error){
-        res.status(400).json({message: 'Bad Request'});
-    }
-})
 
-//DELETE///
-app.delete('/people/:id', async (req,res) => {
-    try{
-        res.status(200).json(await People.findByIdAndDelete(req.params.id));
-    } catch(error){
-        res.status(400).json({message: 'bad request'});
-    }
-});
+app.use('/api/people', peopleRouter);
 
-//UPDATE//
-app.put('/people/:id', async (req,res) => {
-    try {
-        res.status(200).json(await People.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            {new: true} // true returns the new object, otherwise returns the old one
-            /// Fourth argument would be a callback
-        ));
-    } catch (error) {
-        res.status(400).json({message: 'Bad Request'});
-    }
-})
+// /// INDEX
+// app.get('/people', async (req,res)=>{
+//     // const people = await People.find({});
+//     // res.send(people);
+//     ////
+//     try{
+//     res.status(200).json(await People.find({}));
+//     } catch (error) {
+//         res.status(400).json({message: 'Bad Request'});
+//     }
+// });
+
+// ///CREATE/////
+// app.post('/people', async (req,res) => {
+//     try{
+//         res.status(201).json(await People.create(req.body));
+//     } catch(error){
+//         res.status(400).json({message: 'Bad Request'});
+//     }
+// })
+
+// //DELETE///
+// app.delete('/people/:id', async (req,res) => {
+//     try{
+//         res.status(200).json(await People.findByIdAndDelete(req.params.id));
+//     } catch(error){
+//         res.status(400).json({message: 'bad request'});
+//     }
+// });
+
+// //UPDATE//
+// app.put('/people/:id', async (req,res) => {
+//     try {
+//         res.status(200).json(await People.findByIdAndUpdate(
+//             req.params.id,
+//             req.body,
+//             {new: true} // true returns the new object, otherwise returns the old one
+//             /// Fourth argument would be a callback
+//         ));
+//     } catch (error) {
+//         res.status(400).json({message: 'Bad Request'});
+//     }
+// })
 
 ///////////////////////////////
 // LISTENER
