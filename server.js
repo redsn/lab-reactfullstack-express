@@ -11,6 +11,16 @@ const { PORT = 4000, DATABASE_URL} = process.env;
 const express = require("express");
 const mongoose = require('mongoose');
 
+// Mongoose Connection
+mongoose.connect(DATABASE_URL);
+const db = mongoose.connection;
+
+// DB Check
+db.on('connected', () => {console.log('Connected')});
+db.on('disconnect', () => {console.log('disconnected')});
+db.on('error', (err)=> {console.log('an error occured' + err.message)});
+
+
 // create application object
 const app = express();
 
