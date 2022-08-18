@@ -120,6 +120,10 @@ app.use('/api/people', peopleRouter);
 //     }
 // })
 
+app.get('/*', (req,res) => {
+    res.status(404).json({message: 'not found'});
+})
+
 ///////////////////////////////
 // LISTENER
 ////////////////////////////////
