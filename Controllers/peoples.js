@@ -10,7 +10,7 @@ router.get('/', async (req,res)=>{
     // res.send(people);
     ////
     try{
-    res.status(200).json(await People.find({}));
+    res.status(200).json(await People.find({createdBy: req.user.uid}));
     } catch (error) {
         res.status(400).json({message: 'Bad Request'});
     }
@@ -18,10 +18,21 @@ router.get('/', async (req,res)=>{
 
 ///CREATE/////
 router.post('/', async (req,res) => {
+
+    req.body.createdBy = req.user.uid
+
+    for(let key in req.body) {
+        if(req.body[key] === ''){
+            delete req.body[key]
+        }
+    }
     try{
         res.status(201).json(await People.create(req.body));
     } catch(error){
-        res.status(400).json({message: 'Bad Request'});
+        console.log(error)
+        res.status(400).json({message: error});
+        // res.status(400)
+        // console.log(error)
     }
 })
 
@@ -30,7 +41,7 @@ router.delete('/:id', async (req,res) => {
     try{
         res.status(200).json(await People.findByIdAndDelete(req.params.id));
     } catch(error){
-        res.status(400).json({message: 'bad request'});
+        res.status(400).json({message: 'Bad Request'});
     }
 });
 

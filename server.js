@@ -5,9 +5,12 @@
 require("dotenv").config();
 const cors = require('cors');
 const morgan = require('morgan');
+const admin = require('firebase-admin');
+const {getAuth} = require('firebase-admin/auth');
+// const serviceAccount = require('./firebase-private-key.json');
 
 // pull PORT from .env, give default value of 4000
-const { PORT = 4000, DATABASE_URL} = process.env;
+const { PORT = 4000, DATABASE_URL, PRIVATE_KEY, PRIVATE_KEY_ID} = process.env;
 
 const { urlencoded } = require("express");
 // import express, mongoose
@@ -36,6 +39,49 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
 
+admin.initializeApp({
+    credential: admin.credential.cert(
+    {
+        "type": "service_account",
+        "project_id": "people-app-lab",
+        "private_key_id": PRIVATE_KEY_ID,
+        "private_key": PRIVATE_KEY.replace(`\n`,''),
+        "client_email": "firebase-adminsdk-e4axu@people-app-lab.iam.gserviceaccount.com",
+        "client_id": "100023411907152501828",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-e4axu%40people-app-lab.iam.gserviceaccount.com"
+      }
+      
+    )
+  });
+
+
+//// AUTHORIZATION MIDDLEWARE ///
+app.use(async function(req,res,next) {
+    try {
+        const token = req.get('Authorization');
+        if(token){
+            const user = await getAuth().verifyIdToken(token.replace('Bearer ', ''))
+            req.user = user;
+        } else{
+            req.user = null;
+        }    
+        // const user = await admin.auth.verifyIdToken(token.replace('Bearer '));
+        // console.log(user);
+        // console.log(user);   
+    } catch (error) {
+        // console.log(error);
+        req.user = null
+    }
+    next();
+});
+
+function isAuthenticted(req,res,next) {
+    if(req.user) return next();
+    res.status(401).json({message: 'You must be logged in to view this content'})
+}
 
 /////////////
 /////////////////////////////////////////////////////////////
@@ -74,7 +120,7 @@ app.get("/", (req, res) => {
 
 
 
-app.use('/api/people', peopleRouter);
+app.use('/api/people', isAuthenticted, peopleRouter);
 
 // /// INDEX
 // app.get('/people', async (req,res)=>{
