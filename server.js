@@ -45,7 +45,7 @@ admin.initializeApp({
         "type": "service_account",
         "project_id": "people-app-lab",
         "private_key_id": PRIVATE_KEY_ID,
-        "private_key": PRIVATE_KEY.replace(`\n`,''),
+        "private_key": PRIVATE_KEY.replace(/\\n/g,'\n'),
         "client_email": "firebase-adminsdk-e4axu@people-app-lab.iam.gserviceaccount.com",
         "client_id": "100023411907152501828",
         "auth_uri": "https://accounts.google.com/o/oauth2/auth",
