@@ -7,7 +7,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const admin = require('firebase-admin');
 const {getAuth} = require('firebase-admin/auth');
-const serviceAccount = require('./firebase-private-key.json');
+// const serviceAccount = require('./firebase-private-key.json');
 
 // pull PORT from .env, give default value of 4000
 const { PORT = 4000, DATABASE_URL, PRIVATE_KEY, PRIVATE_KEY_ID} = process.env;
